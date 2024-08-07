@@ -1,5 +1,5 @@
-//go:build linux && !wayland && !rgfw && !drm && !sdl && !android
-// +build linux,!wayland,!rgfw,!drm,!sdl,!android
+//go:build linux && wayland && !x11 && !rgfw && !drm && !sdl && !android
+// +build linux,wayland,!x11,!rgfw,!drm,!sdl,!android
 
 package rl
 
@@ -16,9 +16,6 @@ package rl
 #include "external/glfw/src/wl_monitor.c"
 #include "external/glfw/src/wl_window.c"
 
-#include "external/glfw/src/x11_init.c"
-#include "external/glfw/src/x11_monitor.c"
-#include "external/glfw/src/x11_window.c"
 #include "external/glfw/src/glx_context.c"
 
 #include "external/glfw/src/linux_joystick.c"
@@ -34,11 +31,8 @@ GLFWbool _glfwConnectNull(int platformID, _GLFWplatform* platform) {
 	return GLFW_TRUE;
 }
 
-#cgo linux CFLAGS: -Iexternal/glfw/include -DPLATFORM_DESKTOP -Wno-stringop-overflow
+#cgo linux CFLAGS: -Iexternal/glfw/include -DPLATFORM_DESKTOP -Wno-stringop-overflow -D_GLFW_WAYLAND
 #cgo linux LDFLAGS: -lm -pthread -ldl -lrt -lwayland-client -lwayland-cursor -lwayland-egl -lxkbcommon
-
-#cgo linux,x11 CFLAGS: -D_GLFW_X11
-#cgo linux,!x11 CFLAGS: -D_GLFW_X11 -D_GLFW_WAYLAND
 
 #cgo linux,!es2,!es3 LDFLAGS: -lGL
 
